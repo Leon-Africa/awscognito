@@ -30,7 +30,7 @@ In other words, you become a COGNITO CUSTOMIZATION KING.
  
 ![img](/img/king.gif) 
 
-Demonstration:  
+Demonstration: http://awscognito.s3-website-us-east-1.amazonaws.com/ 
 
 (Lambdas implementing tokens in working progress...)
 
