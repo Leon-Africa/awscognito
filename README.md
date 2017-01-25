@@ -16,6 +16,7 @@ IMPORTANT TO NOTE:
 Userpools by default have no IAM roles associted via console hence you cannot manipulate your users access to your aws resources swifty via console as with Identity pools. Although from what I can deduce, this may be a possiblity, if you authenticated your users with only userpools. Addtionally then to give access to services, I would say a possible work around is the user sub. You will see that each user in a userppool has an associted sub, a possiblity can exit to use this sub as a variable in your IAM role. (The sub is the UUID of the authenticated user) This is simialr to what is done with users Identity IDs in a Cognito Identity Pool when you want to limit respective users privelages to resources.
 
 More info: https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-authentication-part-3-roles-and-policies/
+
 I still have to test that for userpools...
 
 With that said: User pool as authentication provider with Identiy pool is a MUCH swifter option!
@@ -26,3 +27,5 @@ You know all your user data.
 You can have various lambda triggers for that data, or any logic pertaining to your signup process for your userpool.
 Meaning serious custom auth flow challeneges, for example, CAPCHAS or even biometric.
 In other words, you become a COGNITO CUSTOMIZATION KING. 
+
+Demonstration:  
