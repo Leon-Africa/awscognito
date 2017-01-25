@@ -10,10 +10,10 @@ For the browser setup you require two pools, the userpool for your users and the
 In know you thinking....
 WHY would you want to do that?!
 
-Answer: Cognito was generally released as only federated identites hence user credentials were obtained from a third party providing authenticity. Therefore Authentication providers are an integral part of Cognito, you either go Authenticated or Unauthenticed. (And Unauthenticed is technically just temporary authentication anyway...) So if you want to use a userpool and harness the benefits offered by Cognito Identity pool what you have to do is have your user pool as the authentication provider. An this authentication you can handle yourself. In this way you harness the benefits of both userpools and Cognito Identity pools. So to summarize, think of it like instead of facebook being your authentication provider, for example, your userpool now does that.
+Answer: Cognito was generally released as only federated identites hence user credentials were obtained from a third party providing authenticity. Therefore Authentication providers are an integral part of Cognito, you either go Authenticated or Unauthenticed. (And Unauthenticed is technically just temporary authentication anyway...) So if you want to use a userpool and harness the benefits offered by Cognito Identity pool what you have to do is have your user pool as the authentication provider. And this authentication you can handle yourself. In this way you harness the benefits of both userpools and Cognito Identity pools. So to summarize, think of it like instead of facebook being your authentication provider, for example, your userpool now does that.
 
 IMPORTANT TO NOTE:<br>
-Userpools by default have no IAM roles associted via console hence you cannot manipulate your users access to your aws resources swifty via console as with Identity pools. Although from what I can deduce, this may be a possiblity, if you authenticated your users with only userpools. Addtionally then to give access to services, I would say a possible work around is the user sub. You will see that each user in a userppool has an associted sub, a possiblity can exit to use this sub as a variable in your IAM role. (The sub is the UUID of the authenticated user) This is simialr to what is done with users Identity IDs in a Cognito Identity Pool when you want to limit respective users privelages to resources.
+Userpools by default have no IAM roles associted via console hence you cannot manipulate your users access to your aws resources swifty via console as with Identity pools. Although from what I can deduce, this may be a possiblity - if you authenticated your users with only userpools. Addtionally then to give access to AWS services, I would say a possible work around is the user sub. You will see that each user in a userppool has an associted sub, a possiblity can exist to use this sub as a variable in your IAM role. (The sub is the UUID of the authenticated user) This is simialr to what is done with users Identity IDs in a Cognito Identity Pool when you want to limit respective users privelages to resources.
 
 More info: https://aws.amazon.com/blogs/mobile/understanding-amazon-cognito-authentication-part-3-roles-and-policies/
 
@@ -32,5 +32,9 @@ In other words, you become a COGNITO CUSTOMIZATION KING.
 
 Demonstration:  
 
+(Lambdas implementing tokens in working progress...)
+Updates to be expected from time to time.
+
+Cheers!
 
 
