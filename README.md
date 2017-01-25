@@ -33,7 +33,6 @@ In other words, you become a COGNITO CUSTOMIZATION KING.
 Demonstration:  
 
 (Lambdas implementing tokens in working progress...)
-Updates to be expected from time to time.
 
 Cheers!
 
