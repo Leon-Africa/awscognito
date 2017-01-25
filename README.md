@@ -28,7 +28,7 @@ You can have various lambda triggers for that data, or any logic pertaining to y
 Meaning serious custom auth flow challeneges, for example, CAPCHAS or even biometric.
 In other words, you become a COGNITO CUSTOMIZATION KING. 
 
- <img src="awscognito/img/king.gif" width="350"/>
+ <img src="awscognito/img/king.gif" alt="" style="margin: auto; padding: 10px;"/>
 
 Demonstration:  
 
