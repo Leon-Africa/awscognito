@@ -1,0 +1,207 @@
+<!-- /*
+	Frontend: AngularJS
+
+	AWS Services: API Gateway, Lambda, Cognito, SNS
+
+	Functionality: Frontend accepts user data and posts to API Gateway (AWS BrowserScript)
+				   API Gateway Posts data to Lambda
+				   Lambda accepts data and authenticates user to Cognito Pool using Developer Authenticated Identites (Node JS)
+				   Cognito Pool has associated Lambda trigger that fires on user create.
+				   In trigger take identityID and extract user information (Communicate succeful user signup SNS) (Node JS)
+				   Also in trigger take extracted user data and subcribe user to topic 
+
+				   NOTE: Topic created in Lambda, therefore have check to see if topic exits, if not create, if so topic exists, skip creation.
+ */ -->
+
+
+<!doctype html>
+<html ng-app="aws_app">
+<head>
+   
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.11/angular.js"></script>
+  <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/bower_components/sweetalert/dist/sweetalert.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="/bower_components/sweetalert/dist/sweetalert.min.js""></script>
+
+  <!-- API Gateway Generated SDK -->
+   <script type="text/javascript" src="lib/axios/dist/axios.standalone.js"></script>
+   <script type="text/javascript" src="lib/CryptoJS/rollups/hmac-sha256.js"></script>
+   <script type="text/javascript" src="lib/CryptoJS/rollups/sha256.js"></script>
+   <script type="text/javascript" src="lib/CryptoJS/components/hmac.js"></script>
+   <script type="text/javascript" src="lib/CryptoJS/components/enc-base64.js"></script>
+   <script type="text/javascript" src="lib/url-template/url-template.js"></script>
+   <script type="text/javascript" src="lib/apiGatewayCore/sigV4Client.js"></script>
+   <script type="text/javascript" src="lib/apiGatewayCore/apiGatewayClient.js"></script>
+   <script type="text/javascript" src="lib/apiGatewayCore/simpleHttpClient.js"></script>
+   <script type="text/javascript" src="lib/apiGatewayCore/utils.js"></script>
+   <script type="text/javascript" src="apigClient.js"></script>
+
+   <!-- COGNITO -->
+   <script src="/js/jsbn.js"></script>
+   <script src="/js/jsbn2.js"></script>
+   <script src="/js/sjcl.js"></script>
+   <script src="/bower_components/moment/moment.js"></script>
+   <script src="/js/aws-cognito-sdk.min.js"></script>
+   <script src="/js/amazon-cognito-identity.min.js"></script>
+   <script src="/bower_components/aws-sdk/dist/aws-sdk.min.js"></script>
+
+
+
+   <!-- CONTROLLER -->
+   <script src="controllers/aws_connect.js"></script>
+</head>
+<body  style="padding-top:100px;">
+ 
+ <div class="container">
+  <div class="page-header">
+    <h1>Browser Script Userpools with Cognito</h1>      
+  </div>
+  <p>
+  	The documentation on how to setup browser script, securely, is pretty all over the place. Especially with Cognito, <!-- The same kind of goes for developer authentication. -->
+ I have not found a concise to the point explanation. This is an attempt to such a summary with code. Using Angular JS, in Brower Script Cognito, then Lambda doing authentication via userpool associted lambda triggers, after this you can pretty much hook up to any other service via your lambdas for the specific users in your pool.<br>
+<br>
+
+<h4>Briefing:</h4>
+<p>
+  For the browser setup you require two pools, the userpool for your users and then an identity pool.
+  The userpool is added as an Authentication provider for the identity pool.
+  In your browser code goes the userpool logic to signup a user.
+  After the user is signed up, we call lambda that does authentication to the identity pool.
+  The credentials to authenticate that user come from the Cognito Identiy Pool. (This is how its done) <br><br>
+
+  In know you thinking.... <br>
+  <strong>WHY would you want to do that?!</strong><br><br>
+
+  Answer:
+  Cognito was generally released as only federated identites hence user credentials were obtained from a third party providing authenticity.
+  Therefore Authentication providers are an integral part of Cognito, you either go Authenticated or Unauthenticed. (And Unauthenticed is technically just temporary authentication anyway...)
+  So if you want to use a userpool and harness the benefits offered by Cognito Identity pool what you have to do is have your user pool as the authentication provider. An this authentication you can handle yourself.
+  In this way you harness the benefits of both userpools and Cognito Identity pools.
+
+  So to summarize, think of it like instead of facebook being your authentication provider, for example, your userpool now does that.  <br><br>
+
+<strong>IMPORTANT TO NOTE:</strong><br>
+Userpools by default have no IAM roles associted via console hence you cannot manipulate your users access to your aws resources swifty via console as with Identity pools.
+Although from what I can deduce, this may be a possiblity, if you authenticated your users with only userpools. 
+Addtionally then to give access to services, I would say a possible work around is the user sub.
+You will see that each user in a userppool has an associted sub, a possiblity can exit to use this sub as a variable in your IAM role. (The sub is the UUID of the authenticated user)
+This is simialr to what is done with users Identity IDs in a Cognito Identity Pool when you want to limit respective users privelages to resources.
+<br>
+More info:
+<br> 
+
+I still have to test that for userpools...<br><br>
+
+<strong>With that said:</strong>
+User pool as authentication provider with Identiy pool is a MUCH swifter option!<br><br>
+  <strong>To mention a few benefits:</strong><br>
+  Easily configure and manage access for users to AWS resources.<br>
+  You know all your user data.<br>
+  You can have various lambda triggers for that data, or any logic pertaining to your signup process for your userpool.<br>
+  Meaning serious custom auth flow challeneges, for example, CAPCHAS or even biometric.<br>
+  In other words, you become a COGNITO CUSTOMIZATION KING.
+
+</p>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="img/king.gif" alt="" style="margin: auto; padding: 10px;" >
+
+
+	</p> 
+
+
+
+</div>
+
+<br><br>
+
+<strong><h4>With that said:</h4></strong>
+<p>
+  Below is an example that uses Cognito in the manner as describe.
+
+  On the left is you sign up to a userpool which is handled using sdk js in browser. 
+  The user pool has an associated post sign up lambda trigger. This lambda function contains the
+  logic to authenticated the user against the existing userpool into the Cognito Identiy Pool.
+
+</p><br>
+
+View Source code on github: <a href="linktocode" "view code" target="_blank">Link to code</a>
+
+<br><br>
+
+
+<div style="width: 40%; float:left">
+  <form align="center" class="form-horizontal" name="form" novalidate role="form" style="width: 500px; margin: 0 auto;" ng-controller="AwsConnect">
+      <div class="form-group" ng-class="{ 'has-error' : form.name.$invalid && form.name.$dirty }">
+        <label for="name" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" id="name" class="form-control" ng-model="obj.name" required>
+          <p ng-show="form.name.$invalid && form.name.$dirty" class="help-block">Name is required</p>
+        </div>
+      </div>
+
+    <!-- WHEN YOU DECIDE TO ENABLE MFA -->
+    <!--   <div class="form-group" ng-class="{ 'has-error' : form.email.$invalid }">
+        <label for="email" class="col-sm-2 control-label">Email</label>
+        <div class="col-sm-10">
+          <input type="email" name="email" id="email" class="form-control" ng-model="obj.email">
+          <p ng-show="form.email.$invalid" class="help-block">Email is not valid</p>
+          <p ng-show="form.email.$valid" class="help-block">Please Enter a working email to recieve Verification Code</p>
+        </div>
+      </div> -->
+       <div class="form-group" ng-class="{ 'has-error' : form.password.$invalid }">
+        <label for="email" class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-10">
+          <input type="password" name="password" id="password" class="form-control" ng-model="obj.password" ng-minlength="6" ng-maxlength="6" >
+          <p ng-show="form.password.$invalid" class="help-block">Password must contain 6 numbers only </p>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary" ng-disabled="form.$invalid" ng-click="register()">Register</button>
+        </div>
+        
+      </div>
+    </form>
+</div>
+
+<div style="width: 60%; float:right">
+  <form align="center" class="form-horizontal" name="form" novalidate role="form" style="width: 500px; margin: 0 auto;" ng-controller="AwsConnect">
+      <div class="form-group" ng-class="{ 'has-error' : form.login_name.$invalid && form.login_name.$dirty }">
+        <label for="name" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+          <input type="text" name="login_name" id="login_name" class="form-control" ng-model="obj.login_name" required>
+          <p ng-show="form.login_name.$invalid && form.login_name.$dirty" class="help-block">Name is required</p>
+        </div>
+      </div>
+       <div class="form-group" ng-class="{ 'has-error' : form.login_password.$invalid }">
+        <label for="email" class="col-sm-2 control-label">Password</label>
+        <div class="col-sm-10">
+          <input type="password" name="login_password" id="login_password" class="form-control" ng-model="obj.login_password" ng-minlength="6" ng-maxlength="6" >
+          <p ng-show="form.login_password.$invalid" class="help-block">Password must contain 6 numbers only </p>
+        </div>
+      </div>
+      
+      <div class="form-group">
+       
+         <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-success" ng-disabled="form.$invalid" ng-click="login()">Login</button>
+        </div>
+      </div>
+    </form>
+</div>
+
+
+
+
+</body>
+</html>
