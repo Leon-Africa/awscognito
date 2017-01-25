@@ -28,6 +28,6 @@ You can have various lambda triggers for that data, or any logic pertaining to y
 Meaning serious custom auth flow challeneges, for example, CAPCHAS or even biometric.
 In other words, you become a COGNITO CUSTOMIZATION KING. 
 
-<iframe src="//giphy.com/embed/xTiTnzEhdR9y9PNyc8" width="300" height="300" frameBorder="0" class="giphy-embed" allowFullScreen></iframe>
+<img src="//giphy.com/embed/xTiTnzEhdR9y9PNyc8" width="350"/>
 
 Demonstration:  
