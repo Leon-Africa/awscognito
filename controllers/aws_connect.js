@@ -194,7 +194,7 @@ angular.module('aws_app', ['ui.bootstrap'])
            
             /*Use the idToken for Logins Map when Federating User Pools with Cognito Identity or when passing through an Authorization Header to an API Gateway Authorizer*/
  
-            $scope.tokens = " Great! here are your tokens for Cognito Identity so you can get temporary access to AWS from STS:\n\n\n\n\n" + "access_token:" + result.getAccessToken().getJwtToken() + "\n\n\n\n\n\nidToken: " + result.idToken.jwtToken;
+            $scope.tokens = " Great! here are your tokens to trade with Cognito Identity so you can get temporary access to AWS(Temp AWS keys are obtained from AWS STS):\n\n\n\n\n" + "access_token:" + result.getAccessToken().getJwtToken() + "\n\n\n\n\n\nidToken: " + result.idToken.jwtToken;
 
             alert($scope.tokens);
 
